@@ -50,6 +50,10 @@ int check_arguments(int argc, char** argv) {
         printf("second arg must be positiv num, but is is %d\n", second_arg_num);
         return 1;
     }
+    if (first_arg_num == 2 && second_arg_num > 4) {
+        printf("if first arg is equal 2 then second arg cant be more then 4 but he is %d\n",  second_arg_num);
+        return 1;
+    }
     return 0;
 }
 
@@ -138,7 +142,7 @@ void count_diff_group_of_symbols(char* str, int lenth, int diff_symbols[]) {
     // diff_symbols[3] - any_others
     for (int i = 0; i < lenth - 1; i++) {
         int ascii_num = (int) str[i];
-        if (ascii_num >= 33 && ascii_num <= 126) {
+        if (ascii_num >= 32 && ascii_num <= 126) {
             if (ascii_num >= 97 && ascii_num <= 122) {
                 diff_symbols[0] += 1;
             } else if (ascii_num >= 65 && ascii_num <= 90) {
