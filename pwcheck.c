@@ -41,8 +41,13 @@ int check_arguments(int argc, char** argv) {
         return 1;
     }
     int first_arg_num = convert_to_num(argv[1]);
+    int second_arg_num = convert_to_num(argv[2]);
     if (first_arg_num > 4 || first_arg_num < 1) {
         printf("first arg must be 1 <= arg <= 4, but it is %d\n", first_arg_num);
+        return 1;
+    }
+    if (second_arg_num < 1) {
+        printf("second arg must be positiv num, but is is %d\n", second_arg_num);
         return 1;
     }
     return 0;
