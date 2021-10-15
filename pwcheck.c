@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define OK 0
+#define NOT_OK 1
+
 typedef struct stats{
     int diffrent_symbols;
     int min_lenth;
@@ -10,11 +13,7 @@ typedef struct stats{
 int lenth_of_str(char* str) {
     // return lenth of str but only if str < 100 symbols
     int i;
-    for (i = 0; i < 100; i++) {
-        if ((int) str[i] == 0 || (int) str[i] == 3) {
-            break;
-        }
-    }
+    for (i = 0; str[i] != '\0'; i++);
     return i;
 }
 
@@ -36,25 +35,25 @@ int convert_to_num(char* argv) {
 
 int check_arguments(int argc, char** argv) {
     // function check if program get all argumets he need
-    if (argc < 3) {
-        printf("Program require min 2 arg, but got only %d\n", argc - 1);
-        return 1;
+    if (argc < 3 || argc > 4) {
+        printf("Program require min 2 max 3 arg, but got %d\n", argc - 1);
+        return NOT_OK;
     }
     int first_arg_num = convert_to_num(argv[1]);
     int second_arg_num = convert_to_num(argv[2]);
     if (first_arg_num > 4 || first_arg_num < 1) {
         printf("first arg must be 1 <= arg <= 4, but it is %d\n", first_arg_num);
-        return 1;
+        return NOT_OK;
     }
     if (second_arg_num < 1) {
         printf("second arg must be positiv num, but is is %d\n", second_arg_num);
-        return 1;
+        return NOT_OK;
     }
     if (first_arg_num == 2 && second_arg_num > 4) {
         printf("if first arg is equal 2 then second arg cant be more then 4 but he is %d\n",  second_arg_num);
-        return 1;
+        return NOT_OK;
     }
-    return 0;
+    return OK;
 }
 
 int count_passwords() {
@@ -114,24 +113,20 @@ void get_stats() {
 
 int compare_strings(char* arg, char* string) {
     // function compare lenth of strings and after that compare strings
-    // return 1 if something wrong
-    // return 0 if everything good
-    int bool_cs = 0;
+    // return NOT_OK if something wrong
+    // return OK if everything good
     int lenth_of_arg = lenth_of_str(arg);
     int lenth_of_string = lenth_of_str(string);
     if (lenth_of_arg != lenth_of_string) {
-        bool_cs = 1;
-        return bool_cs;
+        return NOT_OK;
     }
     for (int i = 0; i < lenth_of_string; i++) {
         // printf("%c\n", string[i]);
-        if (arg[i] == string[i]) {
-        } else {
-            bool_cs = 1;
-            break;
+        if (arg[i] != string[i]) {
+            return NOT_OK;
         }
     }
-    return bool_cs;
+    return OK;
 }
 
 void count_diff_group_of_symbols(char* str, int lenth, int diff_symbols[]) {
@@ -170,9 +165,9 @@ int count_max_sequence(char* str, int lenth) {
 }
 
 int contains_substring(char* str, int lenth, int substring_size) {
-    // function will return 0 if string doesn't contain a substring
+    // function will return OK if string doesn't contain a substring
     // of lenth substring_size two or more time
-    // and return 1 if does
+    // and return NOT_OK if does
     char substring[substring_size];
     int matchs = 0;
     for (int i = 0; i < lenth - (substring_size); i++) {
@@ -188,12 +183,12 @@ int contains_substring(char* str, int lenth, int substring_size) {
                 }
             }
             if (matchs == substring_size) {
-                return 0;
+                return OK;
             }
             matchs = 0;
         }
     }
-    return 1;
+    return NOT_OK;
 }
 
 void safe_level_1(char* str, int symbols[]) {
@@ -239,10 +234,13 @@ void check_pass(char** argv) {
     int safe_level = convert_to_num(argv[1]);
     int criterion_number = convert_to_num(argv[2]);
     // printf("%d %d \n", safe_level, criterion_number);
-    char buf[101];
-    while (fgets(buf, 101, stdin) != NULL) {
+    char buf[120];
+    while (fgets(buf, 120, stdin) != NULL) {
         char* pass = buf;
         int lenth = lenth_of_str(pass);
+        if (lenth >= 101) {
+            continue;
+        }
         int symbols[4] = {0, 0, 0, 0};
         count_diff_group_of_symbols(pass, lenth, symbols);
         // int max_sequence = count_max_sequence(pass, lenth);
@@ -270,14 +268,14 @@ int main(int argc, char** argv) {
     // printf("Hellne %s %s %s count of arg is %d\n", argv[1], argv[2], argv[3], argc);
     int cansel = check_arguments(argc, argv);
     if (cansel) {
-        return 1;
+        return NOT_OK;
     }
     check_pass(argv);
     if (argc >= 4) {
         char* string = "--stats";
-        if (! compare_strings(argv[3], string)) {
+        if (!compare_strings(argv[3], string)) {
             get_stats();
         }
     }
-    return 0;
+    return OK;
 }
